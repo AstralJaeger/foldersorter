@@ -12,7 +12,6 @@ export async function hashFile(
         <
             | 'ascii'
             | 'utf8'
-            | 'utf-8'
             | 'utf16le'
             | 'ucs2'
             | 'ucs-2'
@@ -24,7 +23,7 @@ export async function hashFile(
         >encoding
     );
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, _reject) => {
         const input = fs.createReadStream(filePath);
 
         input.on('end', () => {
