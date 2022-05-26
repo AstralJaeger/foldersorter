@@ -10,7 +10,8 @@ import { ImageHandler } from './filehandlers/ImageHandler';
 import { VideoHandler } from './filehandlers/VideoHandler';
 import { hashFile } from './hashing';
 
-const folder = 'C:\\Users\\astra\\Downloads\\';
+
+const folder = process.env.FOLDER_PATH;
 
 const log = createLogger(
     {
