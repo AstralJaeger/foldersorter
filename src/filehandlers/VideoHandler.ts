@@ -2,19 +2,22 @@ import { createLogger, Logger } from '@lvksh/logger';
 import child_process, {
     ChildProcessWithoutNullStreams,
 } from 'node:child_process';
-import fs, { Stats } from 'node:fs';
+import fs, {promises as fsp, Stats} from 'node:fs';
 import { PathLike } from 'node:fs';
 
 import { logMethods } from '../config';
-import { Handler } from './Handler';
+import {fileSizeInMB, Handler} from './Handler';
 import path from "node:path";
+import EventEmitter from "events";
 
 export class VideoHandler extends Handler {
 
     private static readonly TARGET_FOLDER = 'Videos';
+    private static readonly TARGET_EXTENSION = 'mp4';
 
     private readonly log: Logger<string>;
     private readonly targetDirectory: string;
+    private readonly statisticsEmitter: EventEmitter;
 
     public name: string = VideoHandler.name;
 
@@ -25,6 +28,8 @@ export class VideoHandler extends Handler {
             { padding: 'PREPEND' },
             console.log
         );
+
+        this.statisticsEmitter = new EventEmitter();
 
         this.targetDirectory = path.join(
             this.sourcePath,
@@ -41,52 +46,54 @@ export class VideoHandler extends Handler {
     }
 
     async getSupportedFileTypes(): Promise<string[]> {
-        const childCmd = ['ffmpeg', '-formats'];
-        const child = child_process.spawn(childCmd.at(0), childCmd.slice(1));
-        const output = await this.readStdout(child);
-        const lines = output.split('\n').map((line) => line.trim().toLowerCase());
-        const supportedFormats: string[] = [];
-        const pattern = new RegExp(/(de?)\s+(\w+)\s+(.*)/g);
-
-        for (const line of lines.slice(3)) {
-            if (line.match(pattern)) {
-                const matches = [...line.matchAll(pattern)].flat(1);
-                supportedFormats.push(matches.at(2));
-            }
-        }
-        this.log.info(
-            `VideoHandler ${
-                supportedFormats.length
-            } supported formats: ${supportedFormats
-                .slice(0, Math.min(25, supportedFormats.length))
-                .join(', ')}...`
-        );
-
-        return supportedFormats;
+        return ["mov", "webm", "gif", "hevc", "flv", "mkv", "mp4"];
     }
 
-    private async readStdout(
-        process: ChildProcessWithoutNullStreams
-    ): Promise<String> {
-        // I won't handle errors, but you could maybe idk
-        return new Promise((resolve) => {
-            let output = '';
+    private async runCommand(command: string[]): Promise<void>{
+        return new Promise((resolve, reject) => {
+            const child = child_process.spawn(command[0], command.slice(1));
 
-            process.stdout.setEncoding('utf8');
-            process.stdout.on('data', (data) => {
-                output += data;
+            let output = "";
+            child.stdout.setEncoding("utf8");
+            child.stdout.on("data", (data) => this.log.debug(data));
+            child.stderr.setEncoding("utf8");
+            child.stdout.on("data", (data) => this.log.error(data));
+
+            child.on("close", (code, _signal) => {
+                if (code === 0) {
+                    resolve();
+                } else {
+                    const msg = `Non-zero exit code: ${code}. Message: ${output}`;
+                    this.log.error(msg)
+                    reject(msg);
+                }
             });
 
-            process.stdout.on('close', () => resolve(output));
+
         });
     }
 
     async handle(
-        fullFilePath: PathLike,
-        extension: String,
+        fullFilePath: string,
+        extension: string,
         fileStats: Stats,
         fileHash: string
     ): Promise<void> {
         this.log.info(`[${VideoHandler.name}] Handling file: ${fullFilePath}`);
+        const promises = [];
+        const targetFile = path.join(this.targetDirectory, `${fileHash}.${VideoHandler.TARGET_EXTENSION}`);
+        if (extension !== VideoHandler.TARGET_EXTENSION && !fs.existsSync(targetFile)) {
+            // Generate mp4 equivalent
+            const childConvCmd: string[] = ["ffmpeg", "-i", fullFilePath, targetFile];
+            this.log.info(`Converting with command: ${childConvCmd.join(" ")}`)
+            promises.push(this.runCommand(childConvCmd));
+            this.statisticsEmitter.emit("conversion");
+        }
+
+        promises.push(fsp.copyFile(fullFilePath, path.join(this.targetDirectory, `${fileHash}.${extension}`)));
+        await Promise.allSettled(promises);
+        await fsp.unlink(fullFilePath);
+        this.statisticsEmitter.emit("file_handle");
+        await Promise.resolve();
     }
 }

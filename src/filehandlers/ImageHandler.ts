@@ -46,25 +46,7 @@ export class ImageHandler extends Handler {
     }
 
     async getSupportedFileTypes(): Promise<string[]> {
-        return ["webp", "png", "jpg", "jpeg", "bmp", "svg", "eps", "psd", "ai"];
-    }
-
-    private async readStdout(
-        process: ChildProcessWithoutNullStreams
-    ): Promise<String> {
-        // I won't handle errors, but you could maybe idk
-        return new Promise((resolve, reject) => {
-            let output = '';
-
-            process.stdout.setEncoding('utf8');
-            process.stdout.on('data', (data) => {
-                output += data;
-            });
-
-            process.stdout.on('close', () => resolve(output));
-
-            process.on('error', (err) => reject(err));
-        });
+        return ["webp", "png", "jpg", "jpeg", "bmp", "svg", "eps", "psd", "ai", "heic"];
     }
 
     private async runCommand(command: string[]): Promise<void>{
@@ -100,18 +82,14 @@ export class ImageHandler extends Handler {
             extension !== ImageHandler.TARGET_EXTENSION ||
             fileSizeInMB(fileStats.size) > ImageHandler.MAX_IMAGE_SIZE
         ) {
-            // Generate thumbnail & png equivalent
+            // Generate png thumbnail (720P long axis, lower quality, watermark)
             const childThumbCmd: string[] = ["magick", `${fullFilePath}`, "-flatten", "-resize", "720x720>", "-quality", "95", "-font", "Tahoma", "-pointsize", "10", "-fill", "#cccb", "-stroke", "black", "-strokewidth", "4", "-annotate", "+2+12", "@astraljaeger\/foldersorter", "-fill", "#fffb", "-stroke", "none", "-annotate", "+2+12", "@astraljaeger\/foldersorter", path.join(this.targetDirectory, `${fileHash}${ImageHandler.THUMBNAIL_SUFFIX}.${ImageHandler.TARGET_EXTENSION}`)];
-            const thumbChild = child_process.spawn(childThumbCmd[0], childThumbCmd.slice(1));
-            const response = await this.readStdout(thumbChild);
-            if (response.trim() !== "") {
-                this.log.debug(response);
-            }
             await this.runCommand(childThumbCmd);
             this.statisticsEmitter.emit("thumbnail");
         }
 
-        if (extension !== ImageHandler.TARGET_EXTENSION){
+        if (extension !== ImageHandler.TARGET_EXTENSION) {
+            // Generate png equivalent
             const childConvCmd: string[] = ["magick", `${fullFilePath}`, "-flatten", path.join(this.targetDirectory, `${fileHash}.${ImageHandler.TARGET_EXTENSION}`)];
             await this.runCommand(childConvCmd);
             this.statisticsEmitter.emit("conversion");
