@@ -83,7 +83,7 @@ export class ImageHandler extends Handler {
             fileSizeInMB(fileStats.size) > ImageHandler.MAX_IMAGE_SIZE
         ) {
             // Generate png thumbnail (720P long axis, lower quality, watermark)
-            const childThumbCmd: string[] = ["magick", `${fullFilePath}`, "-flatten", "-resize", "720x720>", "-quality", "95", "-font", "Tahoma", "-pointsize", "10", "-fill", "#cccb", "-stroke", "black", "-strokewidth", "4", "-annotate", "+2+12", "@astraljaeger\/foldersorter", "-fill", "#fffb", "-stroke", "none", "-annotate", "+2+12", "@astraljaeger\/foldersorter", path.join(this.targetDirectory, `${fileHash}${ImageHandler.THUMBNAIL_SUFFIX}.${ImageHandler.TARGET_EXTENSION}`)];
+            const childThumbCmd: string[] = ["magick", `${fullFilePath}`, "-flatten", "-resize", "720x720>", "-quality", "95", "-font", "Tahoma", "-pointsize", "10", "-fill", "#cccb", "-stroke", "#cccb", "-strokewidth", "4", "-annotate", "+2+12", "@astraljaeger\/foldersorter", "-fill", "#fffb", "-stroke", "none", "-annotate", "+2+12", "@astraljaeger\/foldersorter", path.join(this.targetDirectory, `${fileHash}${ImageHandler.THUMBNAIL_SUFFIX}.${ImageHandler.TARGET_EXTENSION}`)];
             await this.runCommand(childThumbCmd);
             this.statisticsEmitter.emit("thumbnail");
         }

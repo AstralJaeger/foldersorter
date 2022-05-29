@@ -1,13 +1,13 @@
 import { createLogger } from '@lvksh/logger';
 import chalk from 'chalk';
-import fs, { PathLike, promises as fsp } from 'node:fs';
+import fs, { promises as fsp } from 'node:fs';
 import path from 'node:path';
 
-import { ArchiveHandler } from './filehandlers/ArchiveHandler';
-import { ExecutableHandler } from './filehandlers/ExecutableHandler';
 import { Handler } from './filehandlers/Handler';
 import { ImageHandler } from './filehandlers/ImageHandler';
 import { VideoHandler } from './filehandlers/VideoHandler';
+import { ArchiveHandler } from './filehandlers/ArchiveHandler';
+import { ExecutableHandler } from './filehandlers/ExecutableHandler';
 import { hashFile } from './hashing';
 
 
@@ -67,7 +67,7 @@ async function handleFile(
     fileTypeMappings: Map<string, Handler>
 ): Promise<void> {
     const fullFilePath = path.join(folderPath, file.name);
-    const extension = path.extname(fullFilePath).replace('.', '');
+    const extension = path.extname(fullFilePath).replace('.', '').toLowerCase();
     const stat = await fsp.stat(fullFilePath);
     const fileHash = await hashFile(fullFilePath);
 
@@ -82,12 +82,12 @@ async function handleFile(
     }
 }
 
-async function handleDirectory(directoryPath: PathLike) {
+async function handleDirectory(directoryPath: string) {
     log.info(`handling directory ${directoryPath}`);
 }
 
 async function handleDuplicate(
-    filePath: PathLike,
+    filePath: string,
     stat: fs.Stats,
     fileHash: string,
     duplicateMap: Map<string, string>

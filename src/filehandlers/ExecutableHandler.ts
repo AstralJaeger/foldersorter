@@ -1,16 +1,16 @@
 import { createLogger, Logger } from '@lvksh/logger';
-import fs, { PathLike, Stats } from 'node:fs';
+import fs, {promises as fsp, Stats} from 'node:fs';
 import path from 'node:path';
 
 import { logMethods } from '../config';
 import { Handler } from './Handler';
+import EventEmitter from "events";
 
 export class ExecutableHandler extends Handler {
     private static readonly TARGET_FOLDER = 'Executables';
-
-    private log: Logger<string>;
+    private readonly log: Logger<string>;
     private readonly targetDirectory: string;
-
+    private readonly statisticsEmitter: EventEmitter;
     public name: string = ExecutableHandler.name;
 
     private constructor(private readonly sourcePath: string) {
@@ -20,6 +20,8 @@ export class ExecutableHandler extends Handler {
             { padding: 'PREPEND' },
             console.log
         );
+
+        this.statisticsEmitter = new EventEmitter();
 
         this.targetDirectory = path.join(
             sourcePath,
@@ -40,11 +42,14 @@ export class ExecutableHandler extends Handler {
     }
 
     async handle(
-        fullFilePath: PathLike,
-        extension: String,
+        fullFilePath: string,
+        extension: string,
         fileStat: Stats,
         fileHash: string
     ): Promise<void> {
-        return undefined;
+        this.log.info(`[${ExecutableHandler.name}] Handling file: ${fullFilePath}`);
+        await fsp.copyFile(fullFilePath, path.join(this.targetDirectory, `${fileHash}.${extension}`));
+        await fsp.unlink(fullFilePath);
+        this.statisticsEmitter.emit("file_handle");
     }
 }
