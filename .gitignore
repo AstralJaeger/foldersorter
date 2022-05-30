@@ -106,3 +106,6 @@ dist
 # IDE files
 .idea
 .vscode
+
+# output and build files
+out/

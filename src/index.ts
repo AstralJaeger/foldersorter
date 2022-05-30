@@ -1,13 +1,14 @@
 import { createLogger } from '@lvksh/logger';
 import chalk from 'chalk';
+import { watch } from 'chokidar';
 import fs, { promises as fsp } from 'node:fs';
 import path from 'node:path';
 
 import { ArchiveHandler } from './filehandlers/ArchiveHandler';
-import { PortableDocumentHandler } from './filehandlers/PortableDocumentHandler';
 import { ExecutableHandler } from './filehandlers/ExecutableHandler';
 import { Handler } from './filehandlers/Handler';
 import { ImageHandler } from './filehandlers/ImageHandler';
+import { PortableDocumentHandler } from './filehandlers/PortableDocumentHandler';
 import { VideoHandler } from './filehandlers/VideoHandler';
 import { hashFile } from './hashing';
 
@@ -43,30 +44,35 @@ const log = createLogger(
 
 async function sortFolder(
     folderPath: string,
-    fileTypeMappings: Map<string, Handler>
+    fileTypeMappings: Map<string, Handler>,
+    duplicateMap: Map<string, string>
 ): Promise<void> {
     const files: fs.Dirent[] = await fsp.readdir(folderPath, {
         withFileTypes: true,
         encoding: 'utf8',
     });
-    const duplicateMap = new Map<string, string>();
 
     for (const file of files) {
         if (file.isDirectory()) {
             await handleDirectory(path.join(folderPath, file.name));
         } else if (file.isFile()) {
-            await handleFile(folderPath, file, duplicateMap, fileTypeMappings);
+            await handleFile(
+                folderPath,
+                file.name,
+                duplicateMap,
+                fileTypeMappings
+            );
         }
     }
 }
 
 async function handleFile(
     folderPath: string,
-    file: fs.Dirent,
+    fileName: string,
     duplicateMap: Map<string, string>,
     fileTypeMappings: Map<string, Handler>
 ): Promise<void> {
-    const fullFilePath = path.join(folderPath, file.name);
+    const fullFilePath = path.join(folderPath, fileName);
     const extension = path.extname(fullFilePath).replace('.', '').toLowerCase();
     const stat = await fsp.stat(fullFilePath);
     const fileHash = await hashFile(fullFilePath);
@@ -130,9 +136,35 @@ const handlers: Handler[] = [
 
 registerFileTypeMappings(handlers)
     .then((mappings) => {
+        const duplicateMap = new Map<string, string>();
+
         log.info('FileTypeMappings registered');
-        sortFolder(folder, mappings)
-            .then(() => console.log('Done.'))
+        sortFolder(folder, mappings, duplicateMap)
+            .then(() => log.info('Initial sorting done.'))
             .catch((error) => console.error(error));
+
+        log.info('Starting file watcher');
+        const watcher = watch(`${folder}*`, {
+            persistent: true,
+            ignoreInitial: true,
+            followSymlinks: false,
+            depth: 1,
+        });
+
+        watcher.on('add', async (fullfilePath) => {
+            const stat = fs.statSync(fullfilePath);
+
+            if (!stat.isDirectory()) {
+                log.info(`File ${fullfilePath} has been added`);
+                await handleFile(
+                    folder,
+                    fullfilePath.slice(fullfilePath.lastIndexOf(path.sep) + 1),
+                    duplicateMap,
+                    mappings
+                );
+            } else {
+                log.debug(`Ignoring directory ${fullfilePath} has been added`);
+            }
+        });
     })
     .catch((error) => log.error(error));

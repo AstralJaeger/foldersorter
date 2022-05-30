@@ -17,6 +17,7 @@ export class ImageHandler extends Handler {
     private readonly log: Logger<string>;
     private readonly targetDirectory: string;
     private readonly statisticsEmitter: EventEmitter;
+    private model: any;
 
     public name: string = ImageHandler.name;
 
@@ -45,23 +46,12 @@ export class ImageHandler extends Handler {
     }
 
     async getSupportedFileTypes(): Promise<string[]> {
-        return [
-            'png',
-            'jpg',
-            'jpeg',
-            'bmp',
-            'svg',
-            'eps',
-            'psd',
-            'ai',
-            'heic',
-        ];
+        return ['png', 'jpg', 'jpeg', 'bmp', 'svg', 'eps', 'psd', 'ai', 'heic'];
     }
 
     private async runCommand(command: string[]): Promise<void> {
         return new Promise((resolve, reject) => {
             const child = child_process.spawn(command.at(0), command.slice(1));
-
             let output = '';
 
             child.stdout.setEncoding('utf8');

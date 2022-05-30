@@ -50,9 +50,15 @@ export class ExecutableHandler extends Handler {
         this.log.info(
             `[${ExecutableHandler.name}] Handling file: ${fullFilePath}`
         );
+
+        const fileName = fullFilePath.slice(
+            fullFilePath.lastIndexOf(path.sep) + 1,
+            fullFilePath.lastIndexOf('.')
+        );
+
         await fsp.copyFile(
             fullFilePath,
-            path.join(this.targetDirectory, `${fileHash}.${extension}`)
+            path.join(this.targetDirectory, `${fileName}.${extension}`)
         );
         await fsp.unlink(fullFilePath);
         this.statisticsEmitter.emit('file_handle');

@@ -104,7 +104,7 @@ export class VideoHandler extends Handler {
                 '-c:v',
                 'libx265',
                 '-preset',
-                'slow',
+                'faster',
                 '-c:a',
                 'aac',
                 '-b:a',
