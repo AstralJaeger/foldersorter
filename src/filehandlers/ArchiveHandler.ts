@@ -1,10 +1,10 @@
-import fs, {PathLike, promises as fsp, Stats} from 'node:fs';
+import { createLogger, Logger } from '@lvksh/logger';
+import EventEmitter from 'node:events';
+import fs, { PathLike, promises as fsp, Stats } from 'node:fs';
 import path from 'node:path';
 
+import { logMethods } from '../config';
 import { Handler } from './Handler';
-import {createLogger, Logger} from "@lvksh/logger";
-import {logMethods} from "../config";
-import EventEmitter from "events";
 
 export class ArchiveHandler extends Handler {
     private static readonly TARGET_FOLDER = 'Archives';
@@ -46,13 +46,18 @@ export class ArchiveHandler extends Handler {
 
     async handle(
         fullFilePath: PathLike,
-        extension: String,
+        extension: string,
         fileStats: Stats,
         fileHash: string
     ): Promise<void> {
-        this.log.info(`[${ArchiveHandler.name}] Handling file: ${fullFilePath}`);
-        await fsp.copyFile(fullFilePath, path.join(this.targetDirectory, `${fileHash}.${extension}`));
+        this.log.info(
+            `[${ArchiveHandler.name}] Handling file: ${fullFilePath}`
+        );
+        await fsp.copyFile(
+            fullFilePath,
+            path.join(this.targetDirectory, `${fileHash}.${extension}`)
+        );
         await fsp.unlink(fullFilePath);
-        this.statisticsEmitter.emit("file_handle");
+        this.statisticsEmitter.emit('file_handle');
     }
 }

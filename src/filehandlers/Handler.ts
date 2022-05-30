@@ -4,8 +4,7 @@ import { PathLike, Stats } from 'node:fs';
  * An abstract handler to unify other handler types.
  */
 export abstract class Handler {
-
-    public name: string = "Handler";
+    public name: string = 'Handler';
 
     /**
      * This methods returns a new handler

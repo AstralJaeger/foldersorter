@@ -6,15 +6,18 @@ import path from 'node:path';
 import { logMethods } from '../config';
 import { Handler } from './Handler';
 
-export class ExecutableHandler extends Handler {
-    private static readonly TARGET_FOLDER = 'Executables';
+export class PortableDocumentHandler extends Handler {
+    private static readonly TARGET_FOLDER = 'Documents';
+
     private readonly log: Logger<string>;
     private readonly targetDirectory: string;
     private readonly statisticsEmitter: EventEmitter;
-    public name: string = ExecutableHandler.name;
 
-    private constructor(private readonly sourcePath: string) {
+    public name: string = PortableDocumentHandler.name;
+
+    constructor(private readonly sourcePath: string) {
         super();
+
         this.log = createLogger(
             logMethods,
             { padding: 'PREPEND' },
@@ -25,7 +28,7 @@ export class ExecutableHandler extends Handler {
 
         this.targetDirectory = path.join(
             sourcePath,
-            ExecutableHandler.TARGET_FOLDER
+            PortableDocumentHandler.TARGET_FOLDER
         );
 
         if (!fs.existsSync(this.targetDirectory)) {
@@ -34,25 +37,31 @@ export class ExecutableHandler extends Handler {
     }
 
     static create(sourcePath: string): Handler {
-        return new ExecutableHandler(sourcePath);
+        return new PortableDocumentHandler(sourcePath);
     }
 
     async getSupportedFileTypes(): Promise<string[]> {
-        return ['exe', 'msi'];
+        return ['pdf'];
     }
 
     async handle(
         fullFilePath: string,
         extension: string,
-        fileStat: Stats,
+        fileStats: Stats,
         fileHash: string
     ): Promise<void> {
         this.log.info(
-            `[${ExecutableHandler.name}] Handling file: ${fullFilePath}`
+            `[${PortableDocumentHandler.name}] Handling file: ${fullFilePath}`
         );
+
+        const fileName = fullFilePath.slice(
+            fullFilePath.lastIndexOf('\\') + 1,
+            fullFilePath.lastIndexOf('.')
+        );
+
         await fsp.copyFile(
             fullFilePath,
-            path.join(this.targetDirectory, `${fileHash}.${extension}`)
+            path.join(this.targetDirectory, `${fileName}.${extension}`)
         );
         await fsp.unlink(fullFilePath);
         this.statisticsEmitter.emit('file_handle');

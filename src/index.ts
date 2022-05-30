@@ -3,13 +3,13 @@ import chalk from 'chalk';
 import fs, { promises as fsp } from 'node:fs';
 import path from 'node:path';
 
+import { ArchiveHandler } from './filehandlers/ArchiveHandler';
+import { PortableDocumentHandler } from './filehandlers/PortableDocumentHandler';
+import { ExecutableHandler } from './filehandlers/ExecutableHandler';
 import { Handler } from './filehandlers/Handler';
 import { ImageHandler } from './filehandlers/ImageHandler';
 import { VideoHandler } from './filehandlers/VideoHandler';
-import { ArchiveHandler } from './filehandlers/ArchiveHandler';
-import { ExecutableHandler } from './filehandlers/ExecutableHandler';
 import { hashFile } from './hashing';
-
 
 const folder = process.env.FOLDER_PATH;
 
@@ -102,10 +102,16 @@ async function registerFileTypeMappings(
 
     for (const handler of handlers) {
         const supportedFormats = await handler.getSupportedFileTypes();
+
         for (const format of supportedFormats) {
             if (fileTypeMappings.has(format)) {
-                log.warning(`Duplicate file type mapping: ${format} current: ${fileTypeMappings.get(format).name} new: ${handler.name}`);
+                log.warning(
+                    `Duplicate file type mapping: ${format} current: ${
+                        fileTypeMappings.get(format).name
+                    } new: ${handler.name}`
+                );
             }
+
             fileTypeMappings.set(format, handler);
         }
     }
@@ -119,6 +125,7 @@ const handlers: Handler[] = [
     ArchiveHandler.create(folder),
     ExecutableHandler.create(folder),
     VideoHandler.create(folder),
+    PortableDocumentHandler.create(folder),
 ];
 
 registerFileTypeMappings(handlers)

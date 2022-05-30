@@ -1,17 +1,13 @@
 import { createLogger, Logger } from '@lvksh/logger';
-import child_process, {
-    ChildProcessWithoutNullStreams,
-} from 'node:child_process';
-import fs, {promises as fsp, Stats} from 'node:fs';
-import { PathLike } from 'node:fs';
+import child_process from 'node:child_process';
+import EventEmitter from 'node:events';
+import fs, { promises as fsp, Stats } from 'node:fs';
+import path from 'node:path';
 
 import { logMethods } from '../config';
-import {fileSizeInMB, Handler} from './Handler';
-import path from "node:path";
-import EventEmitter from "events";
+import { Handler } from './Handler';
 
 export class VideoHandler extends Handler {
-
     private static readonly TARGET_FOLDER = 'Videos';
     private static readonly TARGET_EXTENSION = 'mp4';
 
@@ -46,30 +42,40 @@ export class VideoHandler extends Handler {
     }
 
     async getSupportedFileTypes(): Promise<string[]> {
-        return ["mov", "webm", "gif", "hevc", "flv", "mkv", "mp4"];
+        return [
+            'mov',
+            'webm',
+            'webp',
+            'gif',
+            'hevc',
+            'flv',
+            'mkv',
+            '3gpp',
+            'mp4',
+        ];
     }
 
-    private async runCommand(command: string[]): Promise<void>{
+    private async runCommand(command: string[]): Promise<void> {
         return new Promise((resolve, reject) => {
-            const child = child_process.spawn(command[0], command.slice(1));
+            const child = child_process.spawn(command.at(0), command.slice(1));
 
-            let output = "";
-            child.stdout.setEncoding("utf8");
-            child.stdout.on("data", (data) => this.log.debug(data));
-            child.stderr.setEncoding("utf8");
-            child.stdout.on("data", (data) => this.log.error(data));
+            const output = '';
 
-            child.on("close", (code, _signal) => {
+            child.stdout.setEncoding('utf8');
+            child.stdout.on('data', (data) => this.log.debug(data));
+            child.stderr.setEncoding('utf8');
+            child.stdout.on('data', (data) => this.log.error(data));
+
+            child.on('close', (code, _signal) => {
                 if (code === 0) {
                     resolve();
                 } else {
-                    const msg = `Non-zero exit code: ${code}. Message: ${output}`;
-                    this.log.error(msg)
-                    reject(msg);
+                    const message = `Non-zero exit code: ${code}. Message: ${output}`;
+
+                    this.log.error(message);
+                    reject(message);
                 }
             });
-
-
         });
     }
 
@@ -81,19 +87,44 @@ export class VideoHandler extends Handler {
     ): Promise<void> {
         this.log.info(`[${VideoHandler.name}] Handling file: ${fullFilePath}`);
         const promises = [];
-        const targetFile = path.join(this.targetDirectory, `${fileHash}.${VideoHandler.TARGET_EXTENSION}`);
-        if (extension !== VideoHandler.TARGET_EXTENSION && !fs.existsSync(targetFile)) {
+        const targetFile = path.join(
+            this.targetDirectory,
+            `${fileHash}.${VideoHandler.TARGET_EXTENSION}`
+        );
+
+        if (
+            extension !== VideoHandler.TARGET_EXTENSION &&
+            !fs.existsSync(targetFile)
+        ) {
             // Generate mp4 equivalent
-            const childConvCmd: string[] = ["ffmpeg", "-i", fullFilePath, targetFile];
-            this.log.info(`Converting with command: ${childConvCmd.join(" ")}`)
+            const childConvCmd: string[] = [
+                'ffmpeg',
+                '-i',
+                fullFilePath,
+                '-c:v',
+                'libx265',
+                '-preset',
+                'slow',
+                '-c:a',
+                'aac',
+                '-b:a',
+                '96k',
+                targetFile,
+            ];
+
             promises.push(this.runCommand(childConvCmd));
-            this.statisticsEmitter.emit("conversion");
+            this.statisticsEmitter.emit('conversion');
         }
 
-        promises.push(fsp.copyFile(fullFilePath, path.join(this.targetDirectory, `${fileHash}.${extension}`)));
+        promises.push(
+            fsp.copyFile(
+                fullFilePath,
+                path.join(this.targetDirectory, `${fileHash}.${extension}`)
+            )
+        );
         await Promise.allSettled(promises);
         await fsp.unlink(fullFilePath);
-        this.statisticsEmitter.emit("file_handle");
+        this.statisticsEmitter.emit('file_handle');
         await Promise.resolve();
     }
 }
