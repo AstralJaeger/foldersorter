@@ -29,7 +29,7 @@
     "dependencies": {
         "@lvksh/logger": "^1.6.3",
         "chokidar": "^3.5.3",
-        "dotenv": "^16.0.1",
+        "dotenv": "^16.0.3",
         "fs-extra": "^10.1.0",
         "typescript": "^4.6.4"
     }
