@@ -17,6 +17,8 @@ jobs:
         node: [ "18" ]
     runs-on: windows-latest
     steps:
+      - name: Set env
+        run: echo "::set-output name=timestamp::$(date +'%Y-%m-%d %H:%M:%S')"
       - name: Checkout
         uses: actions/checkout@v3
       - name: Setup Node.js
@@ -34,10 +36,8 @@ jobs:
         uses: marvinpinto/action-automatic-releases@v1.2.1
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          # ${{ x && <yes> || <false> }}
-          automatic_release_tag: "${{ (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')) && github.ref || formatDate(now(), 'yyyyMMdd') }}"
+          automatic_release_tag: ${{ github.ref }}
           prerelease: true
-          title: "Release ${{ (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')) && github.ref || formatDate(now(), 'yyyyMMdd') }}"
-
+          title: "Release ${{ env.timestamp }}"
           files: |
             app.exe
