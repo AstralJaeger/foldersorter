@@ -17,10 +17,13 @@ jobs:
         node: [ "18" ]
     runs-on: windows-latest
     steps:
-      - name: Set env
-        run: echo "::set-output name=timestamp::$(date +'%Y-%m-%d %H:%M:%S')"
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Set vars
+        id: vars
+        run: |
+          echo "$(git rev-parse --short HEAD)"
+          echo "git_hash=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
@@ -37,7 +40,7 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           automatic_release_tag: ${{ github.ref }}
-          prerelease: true
-          title: "Release ${{ env.timestamp }}"
+          prerelease: false
+          title: "Release ${{ git rev-parse --short HEAD }}"
           files: |
             app.exe
