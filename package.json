@@ -6,7 +6,11 @@
     "scripts": {
         "lint": "eslint -c .eslintrc.json --ext .ts ./src",
         "lint:fix": "eslint -c .eslintrc.json --ext .ts --fix ./src",
+        "pretest": "",
+        "test": "",
         "prettier": "prettier --config prettierrc.json --write ./src/**/*.ts",
+        "prebuild": "tsc",
+        "build": "pkg out/index.js -t node10-win-x64 && mv index.exe app.exe",
         "start": "ts-node ./src/index.ts",
         "dev": "ts-node-dev --quiet ./src/index.ts"
     },
@@ -23,6 +27,7 @@
         "eslint-plugin-node": "^11.1.0",
         "eslint-plugin-promise": "^4.2.1",
         "eslint-plugin-unicorn": "^42.0.0",
+        "pkg": "^5.8.1",
         "ts-node": "^10.4.0",
         "ts-node-dev": "^1.1.8"
     },
