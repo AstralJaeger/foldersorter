@@ -154,7 +154,7 @@ registerFileTypeMappings(handlers)
         watcher.on('add', async (fullfilePath) => {
             const stat = fs.statSync(fullfilePath);
 
-            if (!stat.isDirectory()) {
+            if (stat.isFile()) {
                 log.info(`File ${fullfilePath} has been added`);
                 await handleFile(
                     folder,

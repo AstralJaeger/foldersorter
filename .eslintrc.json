@@ -4,13 +4,13 @@
         "ecmaVersion": 2021
     },
     "extends": [
-        "plugin:lvksh/recommended"
+        "plugin:v3xlabs/recommended"
     ],
     "ignorePatterns": [
         "!**/*"
     ],
     "plugins": [
-        "lvksh"
+        "v3xlabs"
     ],
     "env": {
         "node": true
@@ -23,6 +23,10 @@
                 "allowTemplateLiterals": true
             }
         ],
-        "prefer-at": "off"
+        "prefer-at": "off",
+        "linebreak-style": [
+            "error",
+            "windows"
+        ]
     }
 }
