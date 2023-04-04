@@ -7,7 +7,7 @@ export abstract class Handler {
     public name: string = 'Handler';
 
     /**
-     * This methods returns a new handler
+     * These methods returns a new handler
      * @returns Handler
      */
     static create = (sourceDirectory: string): Handler => {
