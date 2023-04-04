@@ -35,9 +35,9 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           # ${{ x && <yes> || <false> }}
-          automatic_release_tag: "${{ (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')) && github.ref || formatDate(now(), 'yyyyMMdd') }}"
+          automatic_release_tag: "${{ (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')) && github.ref || 'latest' }}"
           prerelease: true
-          title: "Release ${{ (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')) && github.ref || formatDate(now(), 'yyyyMMdd') }}"
+          title: "Release ${{ (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')) && github.ref || 'latest' }}"
 
           files: |
             app.exe
