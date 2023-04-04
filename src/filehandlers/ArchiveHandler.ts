@@ -1,6 +1,6 @@
 import { createLogger, Logger } from '@lvksh/logger';
 import EventEmitter from 'node:events';
-import fs, { PathLike, promises as fsp, Stats } from 'node:fs';
+import fs, { promises as fsp, Stats } from 'node:fs';
 import path from 'node:path';
 
 import { logMethods } from '../config';

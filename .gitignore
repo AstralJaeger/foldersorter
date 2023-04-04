@@ -109,3 +109,5 @@ dist
 
 # output and build files
 out/
+*.exe
+yarn-error.log
