@@ -19,11 +19,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Set vars
-        id: vars
-        run: |
-          echo "$(git rev-parse --short HEAD)"
-          echo "git_hash=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
@@ -41,6 +36,6 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           automatic_release_tag: ${{ github.ref }}
           prerelease: false
-          title: "Release ${{ git rev-parse --short HEAD }}"
+          title: "Release: " ${{ $GITHUB_SHA::8 }}
           files: |
             app.exe
