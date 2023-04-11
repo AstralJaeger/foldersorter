@@ -31,4 +31,3 @@ jobs:
           title: "Release"
           files: |
             app.exe
-            ../LICENSE
