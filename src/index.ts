@@ -12,6 +12,7 @@ import { PortableDocumentHandler } from './filehandlers/PortableDocumentHandler'
 import { VideoHandler } from './filehandlers/VideoHandler';
 import { hashFile } from './hashing';
 
+const HANDLE_DELAY = 60_000;
 const folder = process.env.FOLDER_PATH;
 
 const log = createLogger(
@@ -154,17 +155,19 @@ registerFileTypeMappings(handlers)
         watcher.on('add', async (fullfilePath) => {
             const stat = fs.statSync(fullfilePath);
 
-            if (stat.isFile()) {
-                log.info(`File ${fullfilePath} has been added`);
-                await handleFile(
-                    folder,
-                    fullfilePath.slice(fullfilePath.lastIndexOf(path.sep) + 1),
-                    duplicateMap,
-                    mappings
-                );
-            } else {
-                log.debug(`Ignoring directory ${fullfilePath} has been added`);
-            }
+            setTimeout(async () => {
+                if (stat.isFile()) {
+                    log.info(`File ${fullfilePath} has been added`);
+                    await handleFile(
+                      folder,
+                      fullfilePath.slice(fullfilePath.lastIndexOf(path.sep) + 1),
+                      duplicateMap,
+                      mappings
+                    );
+                } else {
+                    log.debug(`Ignoring directory ${fullfilePath} has been added`);
+                }
+            }, HANDLE_DELAY);
         });
     })
     .catch((error) => log.error(error));
