@@ -1,8 +1,7 @@
 import { createLogger, Logger } from '@lvksh/logger';
 import * as child_process from 'node:child_process';
 import EventEmitter from 'node:events';
-import { Stats } from 'node:fs';
-import fs, { promises as fsp } from 'node:fs';
+import fs, { promises as fsp,Stats } from 'node:fs';
 import path from 'node:path';
 
 import { logMethods } from '../config';
@@ -17,7 +16,7 @@ export class ImageHandler extends Handler {
     private readonly log: Logger<string>;
     private readonly targetDirectory: string;
     private readonly statisticsEmitter: EventEmitter;
-    private model: any;
+    private _model: any;
 
     public name: string = ImageHandler.name;
 

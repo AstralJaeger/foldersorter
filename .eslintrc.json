@@ -27,6 +27,7 @@
         "linebreak-style": [
             "error",
             "windows"
-        ]
+        ],
+        "unused-imports/no-unused-vars": "off"
     }
 }

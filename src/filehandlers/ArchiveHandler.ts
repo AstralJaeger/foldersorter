@@ -47,8 +47,8 @@ export class ArchiveHandler extends Handler {
     async handle(
         fullFilePath: string,
         extension: string,
-        fileStats: Stats,
-        fileHash: string
+        _fileStats: Stats,
+        _fileHash: string
     ): Promise<void> {
         this.log.info(
             `[${ArchiveHandler.name}] Handling file: ${fullFilePath}`

@@ -44,8 +44,8 @@ export class ExecutableHandler extends Handler {
     async handle(
         fullFilePath: string,
         extension: string,
-        fileStat: Stats,
-        fileHash: string
+        _fileStat: Stats,
+        _fileHash: string
     ): Promise<void> {
         this.log.info(
             `[${ExecutableHandler.name}] Handling file: ${fullFilePath}`

@@ -94,9 +94,9 @@ async function handleDirectory(directoryPath: string) {
 
 async function handleDuplicate(
     filePath: string,
-    stat: fs.Stats,
-    fileHash: string,
-    duplicateMap: Map<string, string>
+    _stat: fs.Stats,
+    _fileHash: string,
+    _duplicateMap: Map<string, string>
 ) {
     log.info(`handling duplicate: ${filePath}`);
 }

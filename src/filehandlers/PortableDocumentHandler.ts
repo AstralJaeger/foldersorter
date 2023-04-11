@@ -47,8 +47,8 @@ export class PortableDocumentHandler extends Handler {
     async handle(
         fullFilePath: string,
         extension: string,
-        fileStats: Stats,
-        fileHash: string
+        _fileStats: Stats,
+        _fileHash: string
     ): Promise<void> {
         this.log.info(
             `[${PortableDocumentHandler.name}] Handling file: ${fullFilePath}`
