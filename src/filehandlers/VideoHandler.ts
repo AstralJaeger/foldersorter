@@ -17,7 +17,7 @@ export class VideoHandler extends Handler {
 
     public name: string = VideoHandler.name;
 
-    constructor(private readonly _sourcePath: string) {
+    constructor(private readonly sourcePath: string) {
         super();
         this.log = createLogger(
             logMethods,
