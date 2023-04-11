@@ -2,9 +2,7 @@ name: Build
 
 on:
   push:
-    - !"master"
   pull_request:
-    - !"master"
 
 jobs:
   build:
