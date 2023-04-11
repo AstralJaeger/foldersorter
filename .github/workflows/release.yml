@@ -12,21 +12,14 @@ on:
 
 jobs:
   release:
-    strategy:
-      matrix:
-        node: [ "18" ]
     runs-on: windows-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Echo
-        run: |
-          echo "RELEASE_TITLE=Release: $(date +'%A %d %b %Y %H:%M')" >> $GITHUB_ENV
-          echo $env:RELEASE_TITLE
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node }}
+          node-version: "18"
           cache: "yarn"
       - name: Install
         run: yarn install
@@ -34,12 +27,15 @@ jobs:
         run: yarn lint
       - name: Build
         run: yarn build
+      - name: Copy License
+        run: cp LICENSE dist/License
       - name: Automatic Releases
         uses: marvinpinto/action-automatic-releases@v1.2.1
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           automatic_release_tag: ${{ github.ref }}
           prerelease: false
-          title: RELEASE_TITLE
+          title: "Release"
           files: |
             app.exe
+            License
