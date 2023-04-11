@@ -1,3 +1,4 @@
+/* eslint unused-imports/no-unused-vars: 0 */
 import { PathLike, Stats } from 'node:fs';
 
 /**
@@ -29,7 +30,7 @@ export abstract class Handler {
      */
     abstract handle(
         fullFilePath: PathLike,
-        extension: String,
+        extension: string,
         fileStat: Stats,
         fileHash: string
     ): Promise<void>;
@@ -38,3 +39,5 @@ export abstract class Handler {
 export function fileSizeInMB(value: number): number {
     return value / (1024 * 1024);
 }
+
+/* eslint unused-imports/no-unused-vars: 1 */
