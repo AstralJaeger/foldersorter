@@ -5,13 +5,12 @@
     "main": "index.js",
     "scripts": {
         "prepare": "husky install",
-        "precommit": "yarn run lint:fix && yarn run pretty",
-        "prepush": "yarn run lint",
+        "precommit": "pnpm run lint:fix && pnpm run pretty",
+        "prepush": "pnpm run lint",
         "lint": "eslint -c .eslintrc.json --ext .ts ./src",
         "lint:fix": "eslint -c .eslintrc.json --ext .ts --fix ./src",
         "pretty": "prettier --config .prettierrc --write src/**/*.ts",
-        "prebuild": "tsc",
-        "build": "pkg out/index.js -t node10-win-x64 && mv index.exe app.exe",
+        "build": "tsc && pkg out/index.js -t node18-win-x64 --out-path dist/ && mv dist/index.exe app.exe",
         "start": "ts-node ./src/index.ts",
         "dev": "ts-node-dev --quiet ./src/index.ts"
     },
@@ -38,12 +37,13 @@
     },
     "dependencies": {
         "@lvksh/logger": "1.6.4",
+        "chalk": "^5.2.0",
         "chokidar": "3.5.3",
         "dotenv": "16.0.3",
         "fs-extra": "11.1.1"
     },
     "engines": {
-        "yarn": "1.22",
+        "pnpm": ">=8",
         "npm": ">=8",
         "node": ">=18"
     },

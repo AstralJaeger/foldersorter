@@ -26,7 +26,7 @@
         "prefer-at": "off",
         "linebreak-style": [
             "error",
-            "windows"
+            "unix"
         ],
         "unused-imports/no-unused-vars": "off"
     }

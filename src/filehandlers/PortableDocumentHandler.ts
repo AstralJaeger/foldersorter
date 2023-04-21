@@ -55,7 +55,7 @@ export class PortableDocumentHandler extends Handler {
         );
 
         const fileName = fullFilePath.slice(
-            fullFilePath.lastIndexOf('\\') + 1,
+            fullFilePath.lastIndexOf(path.sep) + 1,
             fullFilePath.lastIndexOf('.')
         );
 

@@ -11,7 +11,7 @@
     "arrowParens": "always",
     "requirePragma": true,
     "insertPragma": true,
-    "endOfLine": "crlf",
+    "endOfLine": "lf",
     "overrides": [
         {
             "files": "*.json",
