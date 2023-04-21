@@ -18,7 +18,7 @@
     "author": "AstralJaeger <astraljaeger@pm.me>",
     "license": "MIT",
     "devDependencies": {
-        "@types/node": "18.15.12",
+        "@types/node": "18.15.13",
         "eslint": "8.38.0",
         "eslint-config-standard": "17.0.0",
         "eslint-plugin-import": "2.27.5",
