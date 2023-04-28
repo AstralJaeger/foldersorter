@@ -40,5 +40,5 @@ jobs:
         run: pnpm run build
       - uses: actions/upload-artifact@v3
         with:
-          name: application
-          path: dist/
+          name: dist
+          path: dist/app
