@@ -4,6 +4,7 @@
     "description": "A small tool to sort a folder by document type and run file conversions",
     "main": "index.js",
     "scripts": {
+        "preinstall": "npx only-allow pnpm",
         "clean": "shx rm -rf dist/ && shx rm -rf out/ && shx rm -rf app.exe",
         "prepare": "husky install",
         "precommit": "pnpm run lint:fix && pnpm run pretty",
