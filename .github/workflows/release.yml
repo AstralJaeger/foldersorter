@@ -47,6 +47,6 @@ jobs:
           prerelease: false
           title: "Release"
           files: |
-            dist/app.exe
-            dist/app
-            LICENSE
+            dist/app/index-linux
+            dist/app/index-win.exe
+            dist/app/LICENSE
