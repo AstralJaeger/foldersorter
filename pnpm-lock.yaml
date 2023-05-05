@@ -19,8 +19,8 @@ dependencies:
 
 devDependencies:
   '@types/node':
-    specifier: 18.16.2
-    version: 18.16.2
+    specifier: 18.16.4
+    version: 18.16.4
   '@typescript-eslint/eslint-plugin':
     specifier: 5.59.1
     version: 5.59.1(@typescript-eslint/parser@5.59.1)(eslint@8.38.0)(typescript@5.0.4)
@@ -65,10 +65,10 @@ devDependencies:
     version: 0.3.4
   ts-node:
     specifier: 10.9.1
-    version: 10.9.1(@types/node@18.16.2)(typescript@5.0.4)
+    version: 10.9.1(@types/node@18.16.4)(typescript@5.0.4)
   ts-node-dev:
     specifier: 2.0.0
-    version: 2.0.0(@types/node@18.16.2)(typescript@5.0.4)
+    version: 2.0.0(@types/node@18.16.4)(typescript@5.0.4)
   typescript:
     specifier: 5.0.4
     version: 5.0.4
@@ -293,8 +293,8 @@ packages:
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
     dev: true
 
-  /@types/node@18.16.2:
-    resolution: {integrity: sha512-GQW/JL/5Fz/0I8RpeBG9lKp0+aNcXEaVL71c0D2Q0QHDTFvlYKT7an0onCUXj85anv7b4/WesqdfchLc0jtsCg==}
+  /@types/node@18.16.4:
+    resolution: {integrity: sha512-LUhvPmAKAbgm+p/K11IWszLZVoZDlMF4NRmqbhEzDz/CnCuehPkZXwZbBCKGJsgjnuVejotBwM7B3Scrq4EqDw==}
     dev: true
 
   /@types/normalize-package-data@2.4.1:
@@ -2912,7 +2912,7 @@ packages:
     hasBin: true
     dev: true
 
-  /ts-node-dev@2.0.0(@types/node@18.16.2)(typescript@5.0.4):
+  /ts-node-dev@2.0.0(@types/node@18.16.4)(typescript@5.0.4):
     resolution: {integrity: sha512-ywMrhCfH6M75yftYvrvNarLEY+SUXtUvU8/0Z6llrHQVBx12GiFk5sStF8UdfE/yfzk9IAq7O5EEbTQsxlBI8w==}
     engines: {node: '>=0.8.0'}
     hasBin: true
@@ -2931,7 +2931,7 @@ packages:
       rimraf: 2.7.1
       source-map-support: 0.5.21
       tree-kill: 1.2.2
-      ts-node: 10.9.1(@types/node@18.16.2)(typescript@5.0.4)
+      ts-node: 10.9.1(@types/node@18.16.4)(typescript@5.0.4)
       tsconfig: 7.0.0
       typescript: 5.0.4
     transitivePeerDependencies:
@@ -2940,7 +2940,7 @@ packages:
       - '@types/node'
     dev: true
 
-  /ts-node@10.9.1(@types/node@18.16.2)(typescript@5.0.4):
+  /ts-node@10.9.1(@types/node@18.16.4)(typescript@5.0.4):
     resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
     hasBin: true
     peerDependencies:
@@ -2959,7 +2959,7 @@ packages:
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.3
-      '@types/node': 18.16.2
+      '@types/node': 18.16.4
       acorn: 8.8.2
       acorn-walk: 8.2.0
       arg: 4.1.3
