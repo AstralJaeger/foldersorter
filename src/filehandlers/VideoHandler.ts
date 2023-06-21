@@ -1,6 +1,5 @@
 import { createLogger, Logger } from '@lvksh/logger';
 import child_process from 'node:child_process';
-import EventEmitter from 'node:events';
 import fs, { promises as fsp, Stats } from 'node:fs';
 import path from 'node:path';
 
@@ -13,7 +12,7 @@ export class VideoHandler extends Handler {
 
     private readonly log: Logger<string>;
     private readonly targetDirectory: string;
-    private readonly statisticsEmitter: EventEmitter;
+    private readonly statisticsEmitter: EventTarget;
 
     public name: string = VideoHandler.name;
 
@@ -25,7 +24,7 @@ export class VideoHandler extends Handler {
             console.log
         );
 
-        this.statisticsEmitter = new EventEmitter();
+        this.statisticsEmitter = new EventTarget();
 
         this.targetDirectory = path.join(
             this.sourcePath,
@@ -113,7 +112,7 @@ export class VideoHandler extends Handler {
             ];
 
             promises.push(this.runCommand(childConvCmd));
-            this.statisticsEmitter.emit('conversion');
+            this.statisticsEmitter.dispatchEvent(new Event('conversion'));
         }
 
         promises.push(
@@ -124,7 +123,7 @@ export class VideoHandler extends Handler {
         );
         await Promise.allSettled(promises);
         await fsp.unlink(fullFilePath);
-        this.statisticsEmitter.emit('file_handle');
+        this.statisticsEmitter.dispatchEvent(new Event('file_handle'));
         await Promise.resolve();
     }
 }
