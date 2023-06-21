@@ -1,0 +1,25 @@
+version: 2
+updates:
+
+  # Maintain dependencies for pnpm
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    assignees:
+      - "AstralJaeger"
+    commit-message:
+      prefix: "npm"
+    open-pull-requests-limit: 5
+    versioning-strategy: increase-if-necessary
+
+  # Maintain dependencies for github actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    assignees:
+      - "AstralJaeger"
+    commit-message:
+      prefix: "actions"
+    open-pull-requests-limit: 5
