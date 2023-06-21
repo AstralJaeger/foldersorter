@@ -1,6 +1,5 @@
 import { createLogger, Logger } from '@lvksh/logger';
 import * as child_process from 'node:child_process';
-import EventEmitter from 'node:events';
 import fs, { promises as fsp,Stats } from 'node:fs';
 import path from 'node:path';
 
@@ -15,7 +14,7 @@ export class ImageHandler extends Handler {
 
     private readonly log: Logger<string>;
     private readonly targetDirectory: string;
-    private readonly statisticsEmitter: EventEmitter;
+    private readonly statisticsEmitter: EventTarget;
     private _model: any;
 
     public name: string = ImageHandler.name;
@@ -28,7 +27,7 @@ export class ImageHandler extends Handler {
             console.log
         );
 
-        this.statisticsEmitter = new EventEmitter();
+        this.statisticsEmitter = new EventTarget();
 
         this.targetDirectory = path.join(
             sourceDirectory,
@@ -119,7 +118,7 @@ export class ImageHandler extends Handler {
             ];
 
             await this.runCommand(childThumbCmd);
-            this.statisticsEmitter.emit('thumbnail');
+            this.statisticsEmitter.dispatchEvent(new Event('thumbnail'));
         }
 
         if (extension !== ImageHandler.TARGET_EXTENSION) {
@@ -135,7 +134,7 @@ export class ImageHandler extends Handler {
             ];
 
             await this.runCommand(childConvCmd);
-            this.statisticsEmitter.emit('conversion');
+            this.statisticsEmitter.dispatchEvent(new Event('conversion'));
         }
 
         await fsp.copyFile(
@@ -143,7 +142,7 @@ export class ImageHandler extends Handler {
             path.join(this.targetDirectory, `${fileHash}.${extension}`)
         );
         await fsp.unlink(fullFilePath);
-        this.statisticsEmitter.emit('file_handle');
+        this.statisticsEmitter.dispatchEvent(new Event('file_handle'));
         await Promise.resolve();
     }
 }

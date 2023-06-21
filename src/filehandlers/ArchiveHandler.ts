@@ -1,5 +1,4 @@
 import { createLogger, Logger } from '@lvksh/logger';
-import EventEmitter from 'node:events';
 import fs, { promises as fsp, Stats } from 'node:fs';
 import path from 'node:path';
 
@@ -11,7 +10,7 @@ export class ArchiveHandler extends Handler {
 
     private readonly log: Logger<string>;
     private readonly targetDirectory: string;
-    private readonly statisticsEmitter: EventEmitter;
+    private readonly statisticsEmitter: EventTarget;
 
     public name: string = ArchiveHandler.name;
 
@@ -24,7 +23,7 @@ export class ArchiveHandler extends Handler {
             console.log
         );
 
-        this.statisticsEmitter = new EventEmitter();
+        this.statisticsEmitter = new EventTarget();
 
         this.targetDirectory = path.join(
             sourcePath,
@@ -64,6 +63,6 @@ export class ArchiveHandler extends Handler {
             path.join(this.targetDirectory, `${fileName}.${extension}`)
         );
         await fsp.unlink(fullFilePath);
-        this.statisticsEmitter.emit('file_handle');
+        this.statisticsEmitter.dispatchEvent(new Event('file_handle'));
     }
 }
